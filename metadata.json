@@ -1,0 +1,8 @@
+{
+  "name": "RebaLive RW",
+  "description": "A national-scale multimedia platform for Rwanda, combining video streaming, music, news, and creator tools with Kero AI assistant.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ]
+}
