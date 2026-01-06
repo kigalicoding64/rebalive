@@ -14,7 +14,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => {
   return (
     <div className="flex flex-col min-h-screen bg-[#050505] text-white pb-20 md:pb-0 md:pt-16">
-      <Header />
+      <Header onTabChange={onTabChange} />
       
       <main className="flex-grow overflow-x-hidden">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
