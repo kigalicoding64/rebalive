@@ -1,116 +1,131 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 
 const Profile: React.FC = () => {
+  const [lowDataMode, setLowDataMode] = useState(false);
+
   return (
-    <div className="max-w-4xl mx-auto py-8 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <section className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8 pb-10 border-b border-white/10">
-        <div className="relative group">
-          <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-red-500 p-1 bg-black">
-            <img src="https://picsum.photos/seed/user-main/300/300" className="w-full h-full rounded-full object-cover" alt="User" />
+    <div className="max-w-5xl mx-auto py-8 space-y-12 animate-in fade-in duration-700">
+      {/* Premium Profile Header */}
+      <section className="flex flex-col md:flex-row items-center gap-8 pb-12 border-b border-white/5">
+        <div className="relative">
+          <div className="w-32 h-32 md:w-48 md:h-48 rounded-[2.5rem] overflow-hidden rotate-3 hover:rotate-0 transition-transform duration-500 ring-4 ring-red-600/20 p-2 bg-neutral-900 shadow-2xl">
+            <img src="https://picsum.photos/seed/robert/400/400" className="w-full h-full rounded-[2rem] object-cover" alt="" />
           </div>
-          <button className="absolute bottom-1 right-1 bg-red-600 p-2 rounded-full border-4 border-black text-white hover:bg-red-500 transition-colors">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          </button>
+          <div className="absolute -bottom-2 -right-2 bg-amber-500 text-black font-black text-[10px] px-3 py-1 rounded-full shadow-lg">PRO</div>
         </div>
-        <div className="text-center md:text-left space-y-2">
-          <h1 className="text-3xl md:text-4xl font-black">Ishimwe Robert</h1>
-          <p className="text-neutral-400">@robert_rw • Member since Jan 2024</p>
-          <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-4">
-            <div className="bg-neutral-900 border border-neutral-800 px-4 py-2 rounded-xl text-center min-w-[100px]">
-              <div className="text-amber-500 font-black text-xl">1,250</div>
-              <div className="text-[10px] uppercase font-bold text-neutral-500">Credits</div>
+        
+        <div className="text-center md:text-left space-y-4">
+          <div>
+            <h1 className="text-4xl md:text-6xl font-black tracking-tight">Ishimwe Robert</h1>
+            <p className="text-neutral-500 font-medium text-lg">Digital Content Creator • Kigali, RW</p>
+          </div>
+          
+          <div className="flex flex-wrap justify-center md:justify-start gap-4">
+            <div className="px-6 py-3 bg-neutral-900 border border-white/5 rounded-2xl shadow-xl">
+              <span className="block text-2xl font-black text-amber-500">2,450</span>
+              <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Credits</span>
             </div>
-            <div className="bg-neutral-900 border border-neutral-800 px-4 py-2 rounded-xl text-center min-w-[100px]">
-              <div className="text-red-500 font-black text-xl">42</div>
-              <div className="text-[10px] uppercase font-bold text-neutral-500">Following</div>
-            </div>
-            <div className="bg-neutral-900 border border-neutral-800 px-4 py-2 rounded-xl text-center min-w-[100px]">
-              <div className="text-white font-black text-xl">PRO</div>
-              <div className="text-[10px] uppercase font-bold text-neutral-500">Plan</div>
+            <div className="px-6 py-3 bg-neutral-900 border border-white/5 rounded-2xl shadow-xl">
+              <span className="block text-2xl font-black text-red-500">12</span>
+              <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Owned Books</span>
             </div>
           </div>
         </div>
       </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <section className="space-y-4">
-           <h3 className="font-bold text-lg flex items-center">
-             <svg className="w-5 h-5 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-             Wallet & Monetization
-           </h3>
-           <div className="bg-neutral-900 rounded-2xl p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Available Balance</span>
-                <span className="font-bold text-lg">1,250 RWF</span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          {/* Referral Dashboard */}
+          <div className="bg-gradient-to-br from-neutral-800 to-neutral-900 p-8 rounded-[2.5rem] border border-white/5 shadow-2xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/10 rounded-full -mr-32 -mt-32 blur-3xl group-hover:bg-red-600/20 transition-colors"></div>
+            <h3 className="text-2xl font-black mb-2">Referral Dashboard</h3>
+            <p className="text-neutral-400 text-sm mb-8">Empower others to join the digital revolution. Earn 50 Credits for every friend who signs up.</p>
+            
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-black/20 p-4 rounded-2xl">
+                <p className="text-[10px] font-bold text-neutral-500 uppercase mb-1">Total Invites</p>
+                <p className="text-3xl font-black">48</p>
               </div>
-              <div className="flex space-x-3">
-                <button className="flex-grow py-3 bg-red-600 rounded-xl font-bold text-sm hover:bg-red-500 transition-colors flex items-center justify-center space-x-2">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                  <span>Top up MoMo</span>
-                </button>
-                <button className="p-3 bg-neutral-800 rounded-xl hover:bg-neutral-700 transition-colors">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </button>
+              <div className="bg-black/20 p-4 rounded-2xl">
+                <p className="text-[10px] font-bold text-neutral-500 uppercase mb-1">Credits Earned</p>
+                <p className="text-3xl font-black text-amber-500">2,400</p>
               </div>
-              <div className="p-4 bg-black/40 rounded-xl border border-white/5 space-y-2">
-                <p className="text-[11px] text-neutral-500">REFER & EARN</p>
-                <p className="text-xs">Invite 5 friends and get <span className="text-amber-500 font-bold">500 Credits</span> for free!</p>
-                <div className="flex bg-neutral-800 rounded-lg p-2 items-center justify-between text-xs mt-2">
-                  <code className="text-neutral-300">REBALIVE_ISH_50</code>
-                  <button className="text-red-500 font-bold">COPY</button>
-                </div>
+              <div className="bg-black/20 p-4 rounded-2xl">
+                <p className="text-[10px] font-bold text-neutral-500 uppercase mb-1">Rank</p>
+                <p className="text-3xl font-black text-blue-500">Silver</p>
               </div>
-           </div>
-        </section>
+            </div>
 
-        <section className="space-y-4">
-           <h3 className="font-bold text-lg flex items-center">
-             <svg className="w-5 h-5 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-             Settings & Preferences
-           </h3>
-           <div className="bg-neutral-900 rounded-2xl overflow-hidden border border-white/5">
-              {[
-                { label: 'Language', value: 'Kinyarwanda' },
-                { label: 'Dark Mode', value: 'On' },
-                { label: 'Data Saver', value: 'Off' },
-                { label: 'Parental Controls', value: 'Locked' },
-                { label: 'Privacy Policy', value: '>' },
-              ].map((item, i) => (
-                <button key={i} className="w-full px-6 py-4 flex items-center justify-between hover:bg-neutral-800 transition-colors border-b border-white/5 last:border-0">
-                  <span className="text-sm text-neutral-300 font-medium">{item.label}</span>
-                  <span className="text-sm font-bold text-red-500">{item.value}</span>
-                </button>
-              ))}
+            <div className="flex items-center space-x-3">
+              <div className="flex-grow bg-black/40 border border-white/10 p-5 rounded-2xl font-mono text-sm text-neutral-300 uppercase tracking-[0.3em] flex items-center justify-between">
+                <span>REBALIVE_ISH_50</span>
+                <svg className="w-5 h-5 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
+              </div>
+              <button className="bg-white text-black px-8 py-5 rounded-2xl font-black text-sm hover:bg-neutral-200 transition-colors shadow-xl">COPY</button>
+            </div>
+          </div>
+
+          {/* Settings Section */}
+          <div className="space-y-6">
+             <h3 className="text-2xl font-black px-2">App Settings</h3>
+             <div className="bg-neutral-900/50 rounded-[2.5rem] border border-white/5 overflow-hidden shadow-xl">
+                <div className="p-8 flex items-center justify-between border-b border-white/5">
+                   <div>
+                      <h4 className="font-bold text-lg">Low Data Mode</h4>
+                      <p className="text-sm text-neutral-500">Optimizes video streaming for low-bandwidth connections.</p>
+                   </div>
+                   <button 
+                     onClick={() => setLowDataMode(!lowDataMode)}
+                     className={`w-14 h-8 rounded-full transition-all relative ${lowDataMode ? 'bg-red-600' : 'bg-neutral-800'}`}
+                   >
+                     <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all ${lowDataMode ? 'left-7 shadow-lg shadow-black/20' : 'left-1'}`}></div>
+                   </button>
+                </div>
+                {[
+                  { label: 'Kinyarwanda Interface', desc: 'Enable native language support across the app.', value: 'Enabled' },
+                  { label: 'Download over Wi-Fi only', desc: 'Saves your MoMo data balance.', value: 'On' },
+                  { label: 'Notifications', desc: 'New content and breaking news alerts.', value: 'On' }
+                ].map((item, i) => (
+                  <div key={i} className="p-8 flex items-center justify-between border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors cursor-pointer">
+                    <div>
+                        <h4 className="font-bold text-lg">{item.label}</h4>
+                        <p className="text-sm text-neutral-500">{item.desc}</p>
+                    </div>
+                    <span className="text-red-500 font-black text-xs uppercase tracking-widest">{item.value}</span>
+                  </div>
+                ))}
+             </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+           <div className="bg-neutral-900 p-8 rounded-[2.5rem] border border-white/5 shadow-xl">
+              <h3 className="font-black text-xl mb-6 flex items-center">
+                 <svg className="w-6 h-6 mr-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                 Quick MoMo Payout
+              </h3>
+              <div className="space-y-4">
+                 <div className="p-6 bg-black/40 rounded-3xl border border-white/5 flex items-center justify-between">
+                   <div className="text-[10px] font-black text-neutral-500 uppercase">Current Balance</div>
+                   <div className="font-black text-xl">RWF 12,400</div>
+                 </div>
+                 <button className="w-full py-5 bg-amber-500 text-black font-black text-xs rounded-2xl hover:shadow-[0_0_30px_rgba(245,158,11,0.3)] transition-all uppercase tracking-widest">Withdraw Credits</button>
+                 <p className="text-[10px] text-center text-neutral-500">Min. withdrawal: 1,000 RWF</p>
+              </div>
            </div>
-           <button className="w-full py-4 text-neutral-500 hover:text-red-500 font-bold text-sm transition-colors mt-4">
+
+           <div className="bg-red-600/10 p-8 rounded-[2.5rem] border border-red-500/20 shadow-xl">
+              <h3 className="font-black text-xl mb-4">Support Local</h3>
+              <p className="text-sm text-neutral-300 leading-relaxed mb-6">Your Premium subscription directly fuels Rwandan filmmakers, musicians, and journalists. Together we build our culture.</p>
+              <button className="w-full py-4 bg-red-600 text-white font-black text-xs rounded-2xl hover:bg-red-500 transition-colors uppercase tracking-widest shadow-lg">Upgrade Profile</button>
+           </div>
+           
+           <button className="w-full py-4 text-neutral-500 hover:text-red-500 font-black text-sm transition-colors border-2 border-transparent hover:border-red-500/20 rounded-2xl">
              Log Out from RebaLive RW
            </button>
-        </section>
-      </div>
-
-      <section className="space-y-4">
-        <h3 className="font-bold text-lg">Continue Watching</h3>
-        <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
-           {Array.from({ length: 3 }).map((_, i) => (
-             <div key={i} className="flex-shrink-0 w-64 md:w-80 group cursor-pointer">
-                <div className="relative aspect-video rounded-xl overflow-hidden bg-neutral-900">
-                  <img src={`https://picsum.photos/seed/history-${i}/800/450`} className="w-full h-full object-cover opacity-60" alt="" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 ml-0.5" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                    </div>
-                  </div>
-                  <div className="absolute bottom-0 left-0 h-1 bg-red-600 transition-all duration-300" style={{ width: i === 0 ? '70%' : i === 1 ? '45%' : '12%' }}></div>
-                </div>
-                <div className="mt-2">
-                   <h4 className="text-sm font-bold line-clamp-1">History Item {i+1}</h4>
-                   <p className="text-[10px] text-neutral-500">24m remaining</p>
-                </div>
-             </div>
-           ))}
         </div>
-      </section>
+      </div>
     </div>
   );
 };

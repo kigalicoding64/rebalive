@@ -1,8 +1,9 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import Header from './Header';
 import BottomNav from './BottomNav';
 import KeroAssistant from './KeroAssistant';
+import MusicPlayer from './MusicPlayer';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,7 +13,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => {
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white pb-20 md:pb-0 md:pt-16">
+    <div className="flex flex-col min-h-screen bg-[#050505] text-white pb-20 md:pb-0 md:pt-16">
       <Header />
       
       <main className="flex-grow overflow-x-hidden">
@@ -21,8 +22,8 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
         </div>
       </main>
 
+      <MusicPlayer />
       <BottomNav activeTab={activeTab} onTabChange={onTabChange} />
-      
       <KeroAssistant />
     </div>
   );
