@@ -103,11 +103,17 @@ const ContentCard: React.FC<ContentCardProps> = ({ item, variant = 'vertical', o
 
       <div className="mt-5 space-y-2 px-2">
         <h3 className="font-black text-xl line-clamp-1 group-hover:text-red-500 transition-colors tracking-tight">{item.title}</h3>
+        
         <div className="flex items-center space-x-3 text-[10px] font-black uppercase text-neutral-500 tracking-[0.2em]">
            <span className="text-red-600">{item.narrator || item.creator}</span>
            <span className="w-1.5 h-1.5 bg-neutral-800 rounded-full"></span>
            <span>{item.views.toLocaleString()} Views</span>
         </div>
+
+        {/* Descriptive Summary - New Enhancement */}
+        <p className="text-xs text-neutral-400 line-clamp-2 leading-relaxed opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-y-2 group-hover:translate-y-0 h-0 group-hover:h-auto overflow-hidden">
+          {item.description}
+        </p>
       </div>
     </div>
   );
