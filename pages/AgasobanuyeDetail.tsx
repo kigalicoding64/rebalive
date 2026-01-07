@@ -109,7 +109,7 @@ const AgasobanuyeDetail: React.FC<AgasobanuyeDetailProps> = ({
           </h1>
 
           <div className="flex items-center space-x-8 text-sm md:text-xl font-bold text-neutral-400">
-            <span className="flex items-center"><svg className="w-6 h-6 mr-3 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fillRule="evenodd" d="M.458 10C1.732 5.943 5.523 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd"/></svg>{item.views.toLocaleString()}</span>
+            <span className="flex items-center"><svg className="w-6 h-6 mr-3 text-red-600" fill="currentColor" viewBox="0 0 24 24"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fillRule="evenodd" d="M.458 10C1.732 5.943 5.523 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd"/></svg>{item.views.toLocaleString()}</span>
             <span className="text-neutral-600">•</span>
             <span>{item.publishedAt}</span>
             <span className="text-neutral-600">•</span>
@@ -143,7 +143,7 @@ const AgasobanuyeDetail: React.FC<AgasobanuyeDetailProps> = ({
                     <span className="text-[10px] font-black">{downloadProgress}%</span>
                   </div>
                   <span className="animate-pulse uppercase tracking-[0.2em] text-xs">Kubika Filime...</span>
-                </>
+                </div>
               ) : (
                 <>
                   <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>

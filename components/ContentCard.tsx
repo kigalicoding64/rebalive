@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { ContentItem, ContentType, Monetization } from '../types';
 
@@ -11,6 +10,7 @@ interface ContentCardProps {
 
 const ContentCard: React.FC<ContentCardProps> = ({ item, variant = 'vertical', onClick, onQuickPlay }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [displayThumbnail, setDisplayThumbnail] = useState(item.thumbnail);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const isAgasobanuye = item.type === ContentType.AGASOBANUYE;
@@ -20,6 +20,24 @@ const ContentCard: React.FC<ContentCardProps> = ({ item, variant = 'vertical', o
   const handleQuickPlay = (e: React.MouseEvent) => {
     e.stopPropagation();
     onQuickPlay?.(item);
+  };
+
+  // Smart Thumbnail Resolution (e.g. for YouTube)
+  useEffect(() => {
+    const ytMatch = item.url?.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+    if (ytMatch) {
+      setDisplayThumbnail(`https://img.youtube.com/vi/${ytMatch[1]}/maxresdefault.jpg`);
+    } else {
+      setDisplayThumbnail(item.thumbnail);
+    }
+  }, [item.url, item.thumbnail]);
+
+  const handleThumbError = () => {
+    const ytMatch = item.url?.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+    if (ytMatch && displayThumbnail.includes('maxresdefault')) {
+      // Fallback to high quality default if maxres is missing
+      setDisplayThumbnail(`https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`);
+    }
   };
 
   useEffect(() => {
@@ -40,8 +58,9 @@ const ContentCard: React.FC<ContentCardProps> = ({ item, variant = 'vertical', o
     >
       <div className="relative aspect-video rounded-[2.5rem] overflow-hidden bg-neutral-900 border border-white/5 transition-all duration-700 shadow-2xl group-hover:shadow-red-600/20 group-hover:border-red-600/50 group-hover:-translate-y-2">
         <img 
-          src={item.thumbnail} 
+          src={displayThumbnail} 
           alt={item.title} 
+          onError={handleThumbError}
           className={`w-full h-full object-cover transition-all duration-1000 ${isHovered ? 'opacity-0 scale-110' : 'opacity-100 group-hover:scale-110'}`} 
         />
         

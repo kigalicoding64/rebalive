@@ -137,15 +137,25 @@ const AdminDashboard: React.FC = () => {
   const processVideoLink = async () => {
     if (!videoUrl) return;
     setIsProcessing(true);
+    
+    // Check for YouTube link specifically to fetch actual thumbnail
+    const ytMatch = videoUrl.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+    
     try {
-      const isDirectFile = /\.(mp4|webm|ogg|m4v|m3u8|mov)$/.test(videoUrl.toLowerCase());
-      if (!isDirectFile) {
-        alert("Analyzing external source...");
+      if (ytMatch) {
+        setThumbnail(`https://img.youtube.com/vi/${ytMatch[1]}/maxresdefault.jpg`);
         setDuration("Embed");
-        setIsProcessing(false);
-        return;
+        setTitle(`YouTube Video ${ytMatch[1]}`);
+      } else {
+        const isDirectFile = /\.(mp4|webm|ogg|m4v|m3u8|mov)$/.test(videoUrl.toLowerCase());
+        if (!isDirectFile) {
+          alert("Analyzing external source...");
+          setDuration("Embed");
+        } else {
+          setDuration("00:00");
+          setThumbnail(`https://picsum.photos/seed/${Date.now()}/800/450`);
+        }
       }
-      setDuration("00:00");
     } finally {
       setIsProcessing(false);
     }
@@ -154,6 +164,7 @@ const AdminDashboard: React.FC = () => {
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     setIsModalOpen(false);
+    setVideoUrl(''); setThumbnail(''); setDuration(''); setTitle(''); setNarrator('');
   };
 
   const renderContentList = (typeFilter: ContentType | 'ALL') => {
@@ -321,6 +332,69 @@ const AdminDashboard: React.FC = () => {
         
         {activeTab !== 'Overview' && activeTab !== 'Sync Manager' && renderContentList('ALL')}
       </main>
+
+      {/* Deploy Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-black/98 backdrop-blur-2xl animate-in fade-in duration-300">
+           <div className="w-full max-w-4xl bg-neutral-900 rounded-[3rem] border border-white/10 overflow-hidden shadow-2xl flex flex-col max-h-[95vh]">
+              <div className="p-10 border-b border-white/5 flex items-center justify-between flex-shrink-0 bg-neutral-900/80 backdrop-blur-md">
+                 <div>
+                    <h3 className="text-3xl font-black">Content Deployment</h3>
+                    <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-[0.2em] mt-1">AI Link Analyzer v2.0</p>
+                 </div>
+                 <button onClick={() => setIsModalOpen(false)} className="p-4 bg-white/5 rounded-full hover:bg-red-600 transition-all">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                 </button>
+              </div>
+              
+              <form onSubmit={handleSave} className="p-10 overflow-y-auto custom-scroll space-y-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  <div className="md:col-span-2 space-y-3">
+                    <label className={labelStyle}>Video URL / Link *</label>
+                    <div className="flex gap-4">
+                      <input required value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} className={inputStyle} placeholder="Paste link here..." />
+                      <button 
+                        type="button"
+                        onClick={processVideoLink}
+                        disabled={isProcessing || !videoUrl}
+                        className={`px-8 bg-white text-black rounded-2xl text-[10px] font-black uppercase tracking-widest disabled:opacity-20 flex items-center justify-center min-w-[160px] hover:bg-red-600 hover:text-white transition-all`}
+                      >
+                        {isProcessing ? <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div> : <span>AI Analyze</span>}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className={labelStyle}>Title</label>
+                    <input required value={title} onChange={(e) => setTitle(e.target.value)} className={inputStyle} placeholder="Display Title" />
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className={labelStyle}>Narrator Name</label>
+                    <input value={narrator} onChange={(e) => setNarrator(e.target.value)} className={inputStyle} placeholder="Optional" />
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className={labelStyle}>Detected Duration</label>
+                    <input value={duration} onChange={(e) => setDuration(e.target.value)} className={inputStyle} placeholder="00:00" />
+                  </div>
+
+                  <div className="space-y-4 md:col-span-2">
+                    <label className={labelStyle}>Generated Thumbnail Preview</label>
+                    <div className="aspect-video bg-black rounded-[2rem] border-2 border-dashed border-white/10 flex items-center justify-center overflow-hidden">
+                       {thumbnail ? <img src={thumbnail} className="w-full h-full object-cover animate-in fade-in" alt="AI Generated" /> : <div className="text-center p-8"><p className="text-[10px] font-black uppercase text-neutral-600 tracking-widest">Preview frame will appear here after analysis</p></div>}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-12 border-t border-white/5 flex gap-6">
+                  <button type="button" onClick={() => setIsModalOpen(false)} className="flex-grow py-5 bg-neutral-800 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-neutral-700 transition-colors">Cancel</button>
+                  <button type="submit" className="flex-grow py-5 bg-red-600 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-2xl hover:bg-red-500 transition-all">Publish</button>
+                </div>
+              </form>
+           </div>
+        </div>
+      )}
 
       {isAddSourceModalOpen && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-10 bg-black/98 backdrop-blur-2xl">

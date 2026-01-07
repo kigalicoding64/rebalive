@@ -1,16 +1,21 @@
-
 import React, { useState } from 'react';
-import { MOCK_CONTENT } from '../constants';
-import ContentCard from '../components/ContentCard';
+import { MOCK_CONTENT } from '../constants.tsx';
+import ContentCard from '../components/ContentCard.tsx';
+import { ContentItem } from '../types.ts';
 
-const Search: React.FC = () => {
+interface SearchProps {
+  onItemClick?: (item: ContentItem) => void;
+}
+
+const Search: React.FC<SearchProps> = ({ onItemClick }) => {
   const [query, setQuery] = useState('');
   const tags = ['#KigaliNights', '#Gakondo', '#MoMoPay', '#VisitRwanda', '#TechInnovation', '#Inyarwanda'];
 
   const results = query 
     ? MOCK_CONTENT.filter(item => 
         item.title.toLowerCase().includes(query.toLowerCase()) || 
-        item.creator.toLowerCase().includes(query.toLowerCase())
+        item.creator.toLowerCase().includes(query.toLowerCase()) ||
+        (item.narrator && item.narrator.toLowerCase().includes(query.toLowerCase()))
       )
     : [];
 
@@ -70,7 +75,7 @@ const Search: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {results.map(item => (
-              <ContentCard key={item.id} item={item} />
+              <ContentCard key={item.id} item={item} onClick={onItemClick} />
             ))}
             {results.length === 0 && (
               <div className="col-span-full py-20 text-center space-y-4">

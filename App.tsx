@@ -168,7 +168,7 @@ const App: React.FC = () => {
       case 'profile':
         return <Profile theme={theme} onThemeChange={setTheme} />;
       case 'search':
-        return <Search />;
+        return <Search onItemClick={handleItemClick} />;
       case 'subscription':
         return <Subscription />;
       case 'downloads':
