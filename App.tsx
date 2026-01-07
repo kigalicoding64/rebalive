@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from './components/Layout';
 import Home from './pages/Home';
@@ -18,17 +17,31 @@ import AgasobanuyeDetail from './pages/AgasobanuyeDetail';
 import NarratorProfile from './pages/NarratorProfile';
 import DetailOverlay from './components/DetailOverlay';
 import VideoPlayer from './components/VideoPlayer';
+import MusicPlayer from './components/MusicPlayer';
 import { ContentItem, Book, ContentType, UserProfile, Language, NarratorProfile as NarratorType } from './types';
-import { NARRATORS } from './constants';
+import { NARRATORS, MOCK_CONTENT } from './constants';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
   const [playingItem, setPlayingItem] = useState<ContentItem | null>(null);
+  const [currentMusicTrack, setCurrentMusicTrack] = useState<ContentItem | null>(null);
+  const [isOfflinePlay, setIsOfflinePlay] = useState(false);
+  const [playerMode, setPlayerMode] = useState<'expanded' | 'minimized'>('expanded');
   const [readingBook, setReadingBook] = useState<Book | null>(null);
   const [detailItem, setDetailItem] = useState<ContentItem | null>(null);
   const [activeNarrator, setActiveNarrator] = useState<NarratorType | null>(null);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   
+  // Apply theme to document
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+
   // Mock User State
   const [user, setUser] = useState<UserProfile>({
     id: 'user-1',
@@ -40,13 +53,21 @@ const App: React.FC = () => {
     isPremium: true,
     watchHistory: [],
     ownedBooks: [],
-    downloadedIds: ['hero-1'],
+    downloadedIds: ['hero-1', 'r1a', 'g13a'],
     followingNarrators: ['sankara']
   });
 
   const handleItemClick = (item: ContentItem) => {
-    if (item.type === ContentType.AGASOBANUYE) {
-      setDetailItem(item);
+    if (activeTab === 'downloads') {
+      setIsOfflinePlay(true);
+    } else {
+      setIsOfflinePlay(false);
+    }
+
+    if (item.type === ContentType.VIDEO || item.type === ContentType.AGASOBANUYE || item.type === ContentType.SHORT) {
+      handlePlayItem(item);
+    } else if (item.type === ContentType.MUSIC || item.type === ContentType.PODCAST) {
+      handlePlayMusic(item);
     } else {
       setSelectedItem(item);
     }
@@ -60,7 +81,12 @@ const App: React.FC = () => {
       setReadingBook(item as Book);
     } else {
       setPlayingItem(item);
+      setPlayerMode('expanded');
     }
+  };
+
+  const handlePlayMusic = (item: ContentItem) => {
+    setCurrentMusicTrack(item);
   };
 
   const handleDownload = (id: string) => {
@@ -93,6 +119,10 @@ const App: React.FC = () => {
     });
   };
 
+  const togglePlayerMode = () => {
+    setPlayerMode(prev => prev === 'expanded' ? 'minimized' : 'expanded');
+  };
+
   const renderContent = () => {
     if (activeNarrator) {
       return (
@@ -122,11 +152,11 @@ const App: React.FC = () => {
 
     switch (activeTab) {
       case 'home':
-        return <Home />;
+        return <Home onItemClick={handleItemClick} onPlayItem={handlePlayItem} />;
       case 'watch':
         return <Watch onItemClick={handleItemClick} />;
       case 'listen':
-        return <Listen />;
+        return <Listen onPlayTrack={handlePlayMusic} />;
       case 'read':
         return <Read />;
       case 'live':
@@ -138,7 +168,7 @@ const App: React.FC = () => {
       case 'create':
         return <CreatorStudio />;
       case 'profile':
-        return <Profile />;
+        return <Profile theme={theme} onThemeChange={setTheme} />;
       case 'search':
         return <Search />;
       case 'subscription':
@@ -146,12 +176,12 @@ const App: React.FC = () => {
       case 'downloads':
         return <Downloads downloadedIds={user.downloadedIds} onItemClick={handleItemClick} />;
       default:
-        return <Home />;
+        return <Home onItemClick={handleItemClick} onPlayItem={handlePlayItem} />;
     }
   };
 
   return (
-    <Layout activeTab={activeTab} onTabChange={setActiveTab}>
+    <Layout activeTab={activeTab} onTabChange={setActiveTab} theme={theme}>
       <div className="mb-20">
         {renderContent()}
       </div>
@@ -171,7 +201,20 @@ const App: React.FC = () => {
       {playingItem && (
         <VideoPlayer 
           item={playingItem} 
-          onClose={() => setPlayingItem(null)} 
+          mode={playerMode}
+          isOffline={isOfflinePlay}
+          onClose={() => {
+            setPlayingItem(null);
+            setIsOfflinePlay(false);
+          }} 
+          onModeToggle={togglePlayerMode}
+        />
+      )}
+
+      {currentMusicTrack && (
+        <MusicPlayer 
+          track={currentMusicTrack} 
+          onClose={() => setCurrentMusicTrack(null)}
         />
       )}
 
@@ -182,8 +225,7 @@ const App: React.FC = () => {
         />
       )}
 
-      {/* Desktop Helper Navigation */}
-      <div className="hidden lg:flex fixed bottom-8 left-1/2 -translate-x-1/2 bg-neutral-900/80 backdrop-blur-xl border border-white/10 p-2 rounded-3xl shadow-2xl items-center space-x-2 z-40">
+      <div className="hidden lg:flex fixed bottom-8 left-1/2 -translate-x-1/2 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border border-neutral-200 dark:border-white/10 p-2 rounded-3xl shadow-2xl items-center space-x-2 z-40">
         {[
           { id: 'search', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z', label: 'Search' },
           { id: 'downloads', icon: 'M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10', label: 'Downloads' },
@@ -194,7 +236,7 @@ const App: React.FC = () => {
           <button 
             key={item.id}
             onClick={() => setActiveTab(item.id)} 
-            className={`flex flex-col items-center p-3 rounded-2xl transition-all ${activeTab === item.id ? 'bg-red-600 text-white' : 'hover:bg-white/5 text-neutral-500 hover:text-white'}`}
+            className={`flex flex-col items-center p-3 rounded-2xl transition-all ${activeTab === item.id ? 'bg-red-600 text-white' : 'hover:bg-neutral-100 dark:hover:bg-white/5 text-neutral-500 hover:text-neutral-900 dark:hover:text-white'}`}
             title={item.label}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

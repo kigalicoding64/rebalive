@@ -1,13 +1,16 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// Guideline: Create a new GoogleGenAI instance right before making an API call 
+// to ensure it always uses the most up-to-date API key.
 
 export const keroAssistant = {
   async chat(message: string, history: { role: 'user' | 'model'; content: string }[]) {
+    // Initializing instance inside the method for dynamic key support
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     try {
-      const chat = ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-pro-preview',
         contents: [
           ...history.map(h => ({ 
             role: h.role === 'user' ? 'user' : 'model', 
@@ -25,8 +28,8 @@ export const keroAssistant = {
         }
       });
 
-      const response = await chat;
-      return response.text;
+      // Access .text property directly (not a function)
+      return response.text || "Muraho! I encountered an empty response. How can I help you otherwise?";
     } catch (error) {
       console.error("Gemini Error:", error);
       return "Muraho! I'm having a little trouble connecting right now. Please try again in a moment.";
@@ -34,9 +37,11 @@ export const keroAssistant = {
   },
 
   async getRecommendations(userInterests: string[]) {
+    // Initializing instance inside the method for dynamic key support
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     try {
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-3-pro-preview',
         contents: `Based on these interests in Rwanda: ${userInterests.join(', ')}, suggest 3 types of content categories (e.g., Traditional Dance, Kigali Tech Scene, Coffee Farming Documentaries).`,
         config: {
           responseMimeType: "application/json",
@@ -53,7 +58,8 @@ export const keroAssistant = {
           }
         }
       });
-      return JSON.parse(response.text);
+      // Access .text property directly
+      return JSON.parse(response.text || "[]");
     } catch (error) {
       return [];
     }

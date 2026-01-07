@@ -1,112 +1,159 @@
-
-import React from 'react';
-import { MOCK_CONTENT } from '../constants';
+import React, { useState, useEffect } from 'react';
+import { MOCK_CONTENT, NARRATORS } from '../constants';
 import ContentCard from '../components/ContentCard';
-import { ContentType } from '../types';
+import { ContentType, ContentItem } from '../types';
 
-const Home: React.FC = () => {
-  const trending = MOCK_CONTENT.filter(c => c.isTrending || c.type === ContentType.AGASOBANUYE);
-  const shorts = MOCK_CONTENT.filter(c => c.type === ContentType.SHORT);
-  const music = MOCK_CONTENT.filter(c => c.type === ContentType.MUSIC);
+interface HomeProps {
+  onItemClick?: (item: ContentItem) => void;
+  onPlayItem?: (item: ContentItem) => void;
+}
+
+const Home: React.FC<HomeProps> = ({ onItemClick, onPlayItem }) => {
+  const agasobanuyeContent = MOCK_CONTENT.filter(c => c.type === ContentType.AGASOBANUYE);
+  
+  // Featured slides for the cinematic hero
+  const featuredSlides = [
+    agasobanuyeContent[agasobanuyeContent.length - 1],
+    agasobanuyeContent[agasobanuyeContent.length - 2],
+    MOCK_CONTENT.find(c => c.id === 'hero-main')!,
+    agasobanuyeContent[0]
+  ].filter(Boolean);
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % featuredSlides.length);
+    }, 8000);
+    return () => clearInterval(timer);
+  }, [featuredSlides.length]);
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700">
-      {/* Dynamic Hero Banner */}
-      <section className="relative h-[450px] md:h-[600px] rounded-3xl overflow-hidden group">
-        <div className="absolute inset-0">
-          <img 
-            src="https://images.unsplash.com/photo-1542128962-9d50ad7bf714?q=80&w=1600&auto=format&fit=crop" 
-            className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-110" 
-            alt="Hero" 
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-        </div>
-        
-        <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-16 space-y-4">
-          <div className="flex items-center space-x-3">
-             <span className="bg-red-600 px-3 py-1 rounded-full text-[10px] font-black tracking-widest">TOP #1 IN RWANDA</span>
-             <span className="text-neutral-300 font-bold text-sm">Gakondo Documentary</span>
+    <div className="space-y-16 animate-in fade-in duration-1000">
+      {/* Immersive Cinematic Hero Carousel */}
+      <section className="relative h-[70vh] md:h-[85vh] rounded-[3.5rem] overflow-hidden group shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]">
+        {featuredSlides.map((slide, index) => (
+          <div 
+            key={slide.id}
+            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+              index === currentSlide ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-110 z-0'
+            }`}
+          >
+            <img 
+              src={slide.thumbnail} 
+              className="w-full h-full object-cover" 
+              alt={slide.title} 
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+            
+            <div className="absolute inset-0 flex flex-col justify-end p-10 md:p-24 space-y-8 max-w-7xl mx-auto">
+              <div className={`space-y-6 transition-all duration-1000 delay-300 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                <div className="flex items-center space-x-4">
+                   <span className="bg-red-600 px-5 py-2 rounded-full text-[10px] font-black tracking-[0.3em] uppercase shadow-lg shadow-red-600/40">Hot Premiere</span>
+                   <span className="text-white/80 font-black text-xs uppercase tracking-[0.2em]">{slide.narrator || slide.creator} Exclusive</span>
+                </div>
+                <h1 className="text-5xl md:text-9xl font-black max-w-4xl leading-[0.85] tracking-tighter drop-shadow-2xl">
+                  {slide.title}
+                </h1>
+                <p className="text-neutral-300 max-w-2xl text-lg font-medium line-clamp-2 md:line-clamp-none opacity-80">
+                  {slide.description}
+                </p>
+                <div className="flex flex-wrap gap-5 pt-4">
+                  <button 
+                    onClick={() => onPlayItem?.(slide)}
+                    className="bg-red-600 text-white px-16 py-6 rounded-[2rem] font-black flex items-center space-x-4 hover:bg-red-500 transition-all transform hover:scale-105 shadow-[0_25px_60px_rgba(239,68,68,0.5)] active:scale-95"
+                  >
+                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    <span className="text-xl">REBA NONAHA</span>
+                  </button>
+                  <button 
+                    onClick={() => onItemClick?.(slide)}
+                    className="bg-white/10 backdrop-blur-3xl text-white border border-white/20 px-12 py-6 rounded-[2rem] font-black hover:bg-white/20 transition-all text-lg"
+                  >
+                    IBINDI BIRAMBUYE
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-          <h1 className="text-4xl md:text-7xl font-black max-w-2xl leading-tight">Ubwihisho Bw'ingagi</h1>
-          <p className="text-neutral-300 text-sm md:text-lg max-w-xl line-clamp-2">
-            Experience the untold story of the Volcanoes National Park rangers. A RebaLive Original production.
-          </p>
-          <div className="flex flex-wrap gap-4 pt-4">
-            <button className="bg-white text-black px-10 py-4 rounded-2xl font-black flex items-center space-x-3 hover:bg-neutral-200 transition-all transform hover:scale-105 shadow-xl">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-              <span>WATCH NOW</span>
-            </button>
-            <button className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-4 rounded-2xl font-black hover:bg-white/20 transition-all">
-              ADD TO LIST
-            </button>
-          </div>
-        </div>
-      </section>
+        ))}
 
-      {/* For You Section (Netflix Row) */}
-      <section>
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="w-1.5 h-8 bg-red-600 rounded-full"></div>
-          <h2 className="text-2xl font-black">For You, Robert</h2>
-        </div>
-        <div className="flex overflow-x-auto gap-6 pb-6 hide-scrollbar scroll-smooth">
-          {trending.map(item => (
-            <ContentCard key={item.id} item={item} variant="horizontal" />
-          ))}
-          {/* Mocking extra items for scroll feel */}
-          {Array.from({ length: 4 }).map((_, i) => (
-             <ContentCard key={`m-${i}`} item={{...MOCK_CONTENT[1], id: `m-${i}`, title: `New Agasobanuye ${i+1}`, thumbnail: `https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=800&auto=format&fit=crop&sig=${i}`}} variant="horizontal" />
-          ))}
-        </div>
-      </section>
-
-      {/* Amashushyo (Shorts) Section */}
-      <section className="bg-neutral-900/30 -mx-4 px-4 py-8 border-y border-white/5">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <div className="w-1.5 h-8 bg-amber-500 rounded-full"></div>
-            <h2 className="text-2xl font-black tracking-tight">Amashushyo (Shorts)</h2>
-          </div>
-          <button className="text-xs font-black text-amber-500 hover:underline">EXPLORE SHORTS</button>
-        </div>
-        <div className="flex overflow-x-auto gap-4 hide-scrollbar">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <ContentCard 
-              key={`short-${i}`} 
-              item={{
-                ...MOCK_CONTENT[4], 
-                id: `s-${i}`, 
-                thumbnail: `https://images.unsplash.com/photo-1540553016722-983e48a2cd10?q=80&w=400&auto=format&fit=crop&sig=${i}`
-              }} 
+        {/* Carousel Indicators */}
+        <div className="absolute bottom-12 right-12 z-20 flex space-x-3">
+          {featuredSlides.map((_, i) => (
+            <button 
+              key={i}
+              onClick={() => setCurrentSlide(i)}
+              className={`h-1.5 rounded-full transition-all duration-500 ${currentSlide === i ? 'w-12 bg-red-600 shadow-[0_0_15px_rgba(239,68,68,0.8)]' : 'w-3 bg-white/30 hover:bg-white/50'}`}
             />
           ))}
         </div>
       </section>
 
-      {/* Music Row */}
+      {/* Grid: Agasobanuye Masterpieces */}
       <section>
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <div className="w-1.5 h-8 bg-blue-500 rounded-full"></div>
-            <h2 className="text-2xl font-black">Gakondo Vibes</h2>
+        <div className="flex items-center justify-between mb-10">
+          <div className="flex items-center space-x-5">
+             <div className="w-2.5 h-12 bg-red-600 rounded-full shadow-[0_0_20px_rgba(239,68,68,0.5)]"></div>
+             <h2 className="text-4xl md:text-5xl font-black tracking-tighter">Agasobanuye Classics</h2>
           </div>
-          <button className="text-xs font-black text-blue-500">PLAYLISTS</button>
+          <button className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500 hover:text-red-600 transition-colors">Reba Byose (View All)</button>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="group cursor-pointer">
-              <div className="aspect-square bg-neutral-900 rounded-2xl overflow-hidden mb-3 relative shadow-lg">
-                <img src={`https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=400&auto=format&fit=crop&sig=${i}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                   <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-black transform scale-0 group-hover:scale-100 transition-transform">
-                     <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-8 gap-y-14">
+          {agasobanuyeContent.map(item => (
+            <ContentCard 
+              key={item.id} 
+              item={item} 
+              onClick={onItemClick} 
+              onQuickPlay={onPlayItem} 
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Narrator Network Section */}
+      <section className="bg-neutral-950 dark:bg-neutral-900/20 -mx-6 px-10 py-24 rounded-[5rem] border border-white/5 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-red-600/5 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/5 rounded-full blur-[120px]"></div>
+        
+        <div className="relative z-10">
+          <h3 className="text-sm font-black text-red-600 uppercase tracking-[0.6em] mb-16 text-center">Narrator Network • Abanasobanuzi</h3>
+          <div className="flex justify-center flex-wrap gap-12 md:gap-20">
+             {NARRATORS.map(n => (
+               <div key={n.id} className="group cursor-pointer flex flex-col items-center space-y-6">
+                 <div className="relative w-36 h-36 md:w-52 md:h-52 rounded-[4rem] overflow-hidden ring-4 ring-white/5 group-hover:ring-red-600 transition-all duration-700 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.6)] group-hover:-translate-y-4">
+                   <img src={n.avatar} className="w-full h-full object-cover transition-all group-hover:scale-110" alt={n.name} />
+                   <div className="absolute inset-0 bg-black/30 group-hover:bg-transparent transition-colors"></div>
+                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0">
+                      <span className="bg-red-600 text-white text-[8px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full whitespace-nowrap">Sura Umwirondoro</span>
                    </div>
-                </div>
-              </div>
-              <h4 className="font-bold text-sm truncate">Rwandan Soul Mix</h4>
-              <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">48 Tracks</p>
-            </div>
+                 </div>
+                 <div className="text-center">
+                   <h4 className="font-black text-xl tracking-tight">{n.name}</h4>
+                   <p className="text-[10px] text-neutral-500 uppercase font-black tracking-[0.2em] mt-1">Verified Artist</p>
+                 </div>
+               </div>
+             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Recent Additions with National Flair */}
+      <section>
+        <div className="flex items-center space-x-5 mb-10">
+           <div className="w-2.5 h-12 bg-amber-500 rounded-full shadow-[0_0_20px_rgba(245,158,11,0.5)]"></div>
+           <h2 className="text-4xl md:text-5xl font-black tracking-tighter">Ibirimo Gushyashya</h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {MOCK_CONTENT.slice(0, 8).map(item => (
+            <ContentCard 
+              key={item.id} 
+              item={item} 
+              variant="vertical" 
+              onClick={onItemClick} 
+              onQuickPlay={onPlayItem} 
+            />
           ))}
         </div>
       </section>

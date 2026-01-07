@@ -1,77 +1,94 @@
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ContentItem, ContentType, Monetization } from '../types';
 
 interface ContentCardProps {
   item: ContentItem;
   variant?: 'horizontal' | 'vertical' | 'compact';
   onClick?: (item: ContentItem) => void;
+  onQuickPlay?: (item: ContentItem) => void;
 }
 
-const ContentCard: React.FC<ContentCardProps> = ({ item, variant = 'vertical', onClick }) => {
+const ContentCard: React.FC<ContentCardProps> = ({ item, variant = 'vertical', onClick, onQuickPlay }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
   const isAgasobanuye = item.type === ContentType.AGASOBANUYE;
-  const isLive = item.type === ContentType.LIVE;
 
   const handleClick = () => onClick?.(item);
+  
+  const handleQuickPlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onQuickPlay?.(item);
+  };
 
-  if (variant === 'horizontal') {
-    return (
-      <div className="flex-shrink-0 w-80 md:w-96 group cursor-pointer" onClick={handleClick}>
-        <div className="relative aspect-video rounded-xl overflow-hidden bg-neutral-900 shadow-xl transition-all group-hover:ring-2 ring-red-500">
-          <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-          
-          {isAgasobanuye && (
-            <div className="absolute top-2 left-2 px-2 py-0.5 bg-red-600 rounded text-[9px] font-black italic tracking-widest text-white flex items-center">
-              <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
-              AGASOBANUYE
-            </div>
-          )}
-
-          {item.monetization === Monetization.CREDITS && (
-            <div className="absolute top-2 right-2 px-2 py-0.5 bg-amber-500 rounded-full text-[10px] font-black text-black shadow-lg">
-              {item.creditPrice} CR
-            </div>
-          )}
-
-          <div className="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 rounded text-[10px] font-bold">
-            {isLive ? 'LIVE' : item.duration}
-          </div>
-        </div>
-        <div className="mt-3">
-          <h3 className="font-bold text-sm line-clamp-1 group-hover:text-red-500 transition-colors">{item.title}</h3>
-          <p className="text-[11px] text-neutral-400 mt-1">{item.creator} {item.narrator && `• Narrated by ${item.narrator}`}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (item.type === ContentType.SHORT) {
-    return (
-      <div className="flex-shrink-0 w-36 md:w-48 aspect-[9/16] rounded-xl overflow-hidden relative group cursor-pointer" onClick={handleClick}>
-        <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent p-3 flex flex-col justify-end">
-          <h3 className="text-xs font-bold leading-tight line-clamp-2">{item.title}</h3>
-          <p className="text-[10px] text-neutral-300 mt-1">{item.views.toLocaleString()} views</p>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (isHovered && videoRef.current && item.url && !item.url.includes('html')) {
+      videoRef.current.play().catch(() => {});
+    } else if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  }, [isHovered, item.url]);
 
   return (
-    <div className="group cursor-pointer" onClick={handleClick}>
-      <div className="relative aspect-video rounded-xl overflow-hidden bg-neutral-900 mb-2 border border-white/5 group-hover:border-red-500/50 transition-colors">
-        <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+    <div 
+      className="group cursor-pointer animate-in fade-in duration-500" 
+      onClick={handleClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="relative aspect-video rounded-[2.5rem] overflow-hidden bg-neutral-900 border border-white/5 transition-all duration-700 shadow-2xl group-hover:shadow-red-600/20 group-hover:border-red-600/50 group-hover:-translate-y-2">
+        <img 
+          src={item.thumbnail} 
+          alt={item.title} 
+          className={`w-full h-full object-cover transition-all duration-1000 ${isHovered ? 'opacity-0 scale-110' : 'opacity-100 group-hover:scale-110'}`} 
+        />
         
-        {isAgasobanuye && (
-          <div className="absolute top-2 left-2 px-1.5 py-0.5 bg-red-600 rounded text-[8px] font-black text-white">AGASOBANUYE</div>
+        {item.url && !item.url.includes('html') && (
+          <video
+            ref={videoRef}
+            src={item.url}
+            muted
+            playsInline
+            loop
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 pointer-events-none ${isHovered ? 'opacity-100' : 'opacity-0'}`}
+          />
         )}
 
-        {item.duration && <span className="absolute bottom-1.5 right-1.5 px-1 bg-black/80 text-[10px] font-bold rounded">{item.duration}</span>}
-        {isLive && <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-red-600 text-[10px] font-bold rounded animate-pulse">LIVE</span>}
+        {/* Hover Action Layer */}
+        <div className={`absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-[4px] transition-all duration-500 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+          <button 
+            onClick={handleQuickPlay}
+            className="w-20 h-20 bg-red-600 text-white rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(239,68,68,0.6)] transform hover:scale-110 transition-transform active:scale-90"
+          >
+            <svg className="w-10 h-10 ml-1.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+        </div>
+        
+        {/* Badges */}
+        <div className="absolute top-5 left-5 flex flex-col gap-2 z-10">
+          {isAgasobanuye && (
+            <span className="px-3 py-1 bg-red-600 rounded-lg text-[9px] font-black text-white italic tracking-widest shadow-xl uppercase">Agasobanuye</span>
+          )}
+        </div>
+
+        <div className="absolute bottom-5 right-5 z-10">
+          {item.duration && (
+            <span className="px-2.5 py-1 bg-black/90 text-[10px] font-black rounded-lg backdrop-blur-md border border-white/10 text-white">
+              {item.duration}
+            </span>
+          )}
+        </div>
       </div>
-      <div>
-        <h3 className="font-bold text-sm line-clamp-2 leading-snug group-hover:text-red-500 transition-colors">{item.title}</h3>
-        <p className="text-[11px] text-neutral-500 mt-1">{item.creator} {item.narrator && `| ${item.narrator}`} • {item.publishedAt}</p>
+
+      <div className="mt-5 space-y-2 px-2">
+        <h3 className="font-black text-xl line-clamp-1 group-hover:text-red-500 transition-colors tracking-tight">{item.title}</h3>
+        <div className="flex items-center space-x-3 text-[10px] font-black uppercase text-neutral-500 tracking-[0.2em]">
+           <span className="text-red-600">{item.narrator || item.creator}</span>
+           <span className="w-1.5 h-1.5 bg-neutral-800 rounded-full"></span>
+           <span>{item.views.toLocaleString()} Views</span>
+        </div>
       </div>
     </div>
   );

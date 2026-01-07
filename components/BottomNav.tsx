@@ -1,12 +1,12 @@
-
 import React from 'react';
 
 interface BottomNavProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  theme?: 'dark' | 'light';
 }
 
-const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange }) => {
+const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange, theme = 'dark' }) => {
   const tabs = [
     { id: 'home', label: 'Home', icon: (color: string) => <svg className="w-6 h-6" fill="none" stroke={color} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg> },
     { id: 'watch', label: 'Watch', icon: (color: string) => <svg className="w-6 h-6" fill="none" stroke={color} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> },
@@ -16,7 +16,9 @@ const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange }) => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black/95 border-t border-white/10 md:hidden flex justify-around items-center h-16 pb-2 safe-area-bottom">
+    <nav className={`fixed bottom-0 left-0 right-0 z-50 border-t md:hidden flex justify-around items-center h-16 pb-2 safe-area-bottom transition-colors duration-500 ${
+      theme === 'dark' ? 'bg-black/95 border-white/10' : 'bg-white/95 border-neutral-200 shadow-lg'
+    }`}>
       {tabs.map((tab) => (
         <button
           key={tab.id}
