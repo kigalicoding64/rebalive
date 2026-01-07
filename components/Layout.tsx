@@ -1,8 +1,7 @@
-
 import React from 'react';
-import Header from './Header';
-import BottomNav from './BottomNav';
-import KeroAssistant from './KeroAssistant';
+import Header from './Header.tsx';
+import BottomNav from './BottomNav.tsx';
+import KeroAssistant from './KeroAssistant.tsx';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -24,7 +23,6 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange, theme
         </div>
       </main>
 
-      {/* Removed prop-less MusicPlayer to fix TS error. Global player is managed in App.tsx */}
       <BottomNav activeTab={activeTab} onTabChange={onTabChange} theme={theme} />
       <KeroAssistant />
     </div>

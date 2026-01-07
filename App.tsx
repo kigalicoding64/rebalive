@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import Layout from './components/Layout';
-import Home from './pages/Home';
-import Watch from './pages/Watch';
-import Listen from './pages/Listen';
-import Read from './pages/Read';
-import Profile from './pages/Profile';
-import CreatorStudio from './pages/CreatorStudio';
-import Search from './pages/Search';
-import Subscription from './pages/Subscription';
-import LiveTV from './pages/LiveTV';
-import Top100Books from './pages/Top100Books';
-import AdminDashboard from './pages/AdminDashboard';
-import BookReader from './pages/BookReader';
-import Downloads from './pages/Downloads';
-import AgasobanuyeDetail from './pages/AgasobanuyeDetail';
-import NarratorProfile from './pages/NarratorProfile';
-import DetailOverlay from './components/DetailOverlay';
-import VideoPlayer from './components/VideoPlayer';
-import MusicPlayer from './components/MusicPlayer';
-import { ContentItem, Book, ContentType, UserProfile, Language, NarratorProfile as NarratorType } from './types';
-import { NARRATORS, MOCK_CONTENT } from './constants';
+import Layout from './components/Layout.tsx';
+import Home from './pages/Home.tsx';
+import Watch from './pages/Watch.tsx';
+import Listen from './pages/Listen.tsx';
+import Read from './pages/Read.tsx';
+import Profile from './pages/Profile.tsx';
+import CreatorStudio from './pages/CreatorStudio.tsx';
+import Search from './pages/Search.tsx';
+import Subscription from './pages/Subscription.tsx';
+import LiveTV from './pages/LiveTV.tsx';
+import Top100Books from './pages/Top100Books.tsx';
+import AdminDashboard from './pages/AdminDashboard.tsx';
+import BookReader from './pages/BookReader.tsx';
+import Downloads from './pages/Downloads.tsx';
+import AgasobanuyeDetail from './pages/AgasobanuyeDetail.tsx';
+import NarratorProfile from './pages/NarratorProfile.tsx';
+import DetailOverlay from './components/DetailOverlay.tsx';
+import VideoPlayer from './components/VideoPlayer.tsx';
+import MusicPlayer from './components/MusicPlayer.tsx';
+import { ContentItem, Book, ContentType, UserProfile, Language, NarratorProfile as NarratorType } from './types.ts';
+import { NARRATORS, MOCK_CONTENT } from './constants.tsx';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('home');
@@ -33,7 +33,6 @@ const App: React.FC = () => {
   const [activeNarrator, setActiveNarrator] = useState<NarratorType | null>(null);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   
-  // Apply theme to document
   useEffect(() => {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
@@ -42,7 +41,6 @@ const App: React.FC = () => {
     }
   }, [theme]);
 
-  // Mock User State
   const [user, setUser] = useState<UserProfile>({
     id: 'user-1',
     name: 'Ishimwe Robert',
